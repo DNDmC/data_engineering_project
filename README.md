@@ -1,6 +1,6 @@
 
 # 🧠 Kabum Notebook Market Analytics Pipeline
-# 🧠 Pipeline de Análise do Mercado de Notebooks da Kabum
+# 🧠 Pipeline de Engenharia de Dados – Mercado de Notebooks Kabum
 
 ![Python](https://img.shields.io/badge/Python-3.10-blue)
 ![Databricks](https://img.shields.io/badge/Databricks-Data%20Engineering-red)
@@ -12,29 +12,35 @@
 
 # 🇺🇸 English
 
-End-to-end **Data Engineering pipeline** that collects notebook market data from the web and transforms it into analytical insights.
+## Project Overview
 
-Technologies used:
+This project implements a **complete end‑to‑end Data Engineering pipeline** that collects notebook market data from the KaBuM website and transforms it into analytical insights.
+
+The pipeline architecture includes:
 
 - Python Web Scraping
-- Azure Blob Storage (Data Lake)
-- Databricks + PySpark
-- Delta Lake
-- Tableau Dashboards
+- Azure Data Lake (Blob Storage)
+- Databricks + PySpark processing
+- Delta Lake storage format
+- Data Quality monitoring
+- Tableau dashboards
 
-📸 **(insert screenshot here: project overview / architecture)**
+📸 (insert screenshot here: overall project architecture)
 
 ---
 
-# Architecture Overview
+# Architecture
 
-The project follows the **Medallion Architecture pattern**:
+The pipeline follows the **Medallion Architecture pattern**:
 
 Bronze → Silver → Gold
 
-- Bronze → raw scraped data  
-- Silver → cleaned and structured data  
-- Gold → analytical datasets used by dashboards  
+This architecture allows:
+
+- data traceability
+- separation of transformations
+- easier debugging
+- reproducible pipelines
 
 ---
 
@@ -44,10 +50,10 @@ Bronze → Silver → Gold
 flowchart TD
 
 A[Python Web Scraper]
-B[Azure Blob Storage]
-C[Databricks Bronze]
-D[Databricks Silver]
-E[Databricks Gold]
+B[Azure Blob Storage Data Lake]
+C[Databricks Bronze Layer]
+D[Databricks Silver Layer]
+E[Databricks Gold Layer]
 F[Delta Tables]
 G[Tableau Dashboards]
 
@@ -61,15 +67,342 @@ F --> G
 
 ---
 
-# Azure Infrastructure
+# Data Lake Layers
 
-Azure Blob Storage is used as the **Data Lake layer**.
+## Bronze Layer — Raw Data Ingestion
 
-📸 **(insert screenshot here: Azure Storage Account Overview)**
+The Bronze layer stores **raw data collected from the scraper without transformations**.
 
-📸 **(insert screenshot here: containers bronze / silver / gold)**
+Characteristics:
 
-📸 **(insert screenshot here: folder structure inside bronze container)**
+- JSONL ingestion
+- incremental ingestion by `ingestion_date`
+- partitioned by `search_term`
+- raw payload preserved for audit
+
+Example ingestion:
+
+```python
+df_raw = spark.read.json(bronze_path)
+```
+
+Notebook responsible:
+
+📓 (insert notebook here: 01_bronze_kabum_uc_adls_jsonl.ipynb)
+
+📸 (insert screenshot here: bronze table structure in Databricks)
+
+---
+
+## Silver Layer — Data Cleaning & Standardization
+
+The Silver layer performs **data cleaning and schema standardization**.
+
+Transformations include:
+
+- type casting
+- duplicate removal
+- null handling
+- brand normalization
+
+Example transformation:
+
+```python
+df_clean = df_raw     .withColumn("price", F.col("price").cast("double"))     .withColumn("brand", F.upper(F.col("brand")))     .dropDuplicates(["product_key"])
+```
+
+Notebook responsible:
+
+📓 (insert notebook here: 02_silver_transform_uc.ipynb)
+
+📸 (insert screenshot here: silver table schema)
+
+---
+
+## Gold Layer — Feature Engineering & Analytics
+
+The Gold layer produces **analytical datasets ready for BI tools**.
+
+Key transformations:
+
+### Feature extraction
+
+Structured information extracted from product titles using regex.
+
+Example:
+
+```python
+ram_gb = F.regexp_extract(F.col("product_name"), r"(\d+)GB RAM", 1)
+```
+
+### Feature engineering
+
+Derived metrics created:
+
+- discount percentage
+- brand metrics
+- availability indicators
+
+### Data Quality Monitoring
+
+A quality score was implemented to identify dataset issues.
+
+```python
+df_quality = df_gold.withColumn(
+    "quality_score",
+    F.when(F.col("price").isNull(), 0).otherwise(1)
+)
+```
+
+Final analytical table:
+
+```
+notebooks_features_scored
+```
+
+Notebooks responsible:
+
+📓 (insert notebook here: 03_gold_enrichment_uc.ipynb)  
+📓 (insert notebook here: 04_gold_scoring_quality_uc.ipynb)  
+📓 (insert notebook here: 05_dashboard_sql_kpis_uc.ipynb)
+
+📸 (insert screenshot here: gold table schema)
+
+---
+
+# Data Pipeline Internals
+
+Pipeline notebooks execution order:
+
+```
+00_config_uc.ipynb
+01_bronze_kabum_uc_adls_jsonl.ipynb
+02_silver_transform_uc.ipynb
+03_gold_enrichment_uc.ipynb
+04_gold_scoring_quality_uc.ipynb
+05_dashboard_sql_kpis_uc.ipynb
+```
+
+📓 (insert notebook here: 00_config_uc.ipynb)
+
+Each notebook represents a specific stage of the pipeline:
+
+| Notebook | Purpose |
+|--------|--------|
+00_config_uc | Unity Catalog configuration |
+01_bronze | Raw ingestion from Azure Data Lake |
+02_silver | Data cleaning and schema normalization |
+03_gold | Feature extraction and enrichment |
+04_gold_scoring | Data quality scoring |
+05_dashboard | KPI queries for dashboards |
+
+---
+
+# Web Scraping
+
+The scraper collects:
+
+- product name
+- price
+- discount
+- rating
+- reviews
+- specifications
+
+Example:
+
+```python
+import requests
+from bs4 import BeautifulSoup
+
+def scrape_product(url):
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, "html.parser")
+
+    name = soup.find("h1").text
+    price = soup.find("span").text
+
+    return {
+        "product_name": name,
+        "price": price
+    }
+```
+
+📄 (insert script here: kabum_scrape_v2.py)  
+📄 (insert script here: run_local.py)
+
+---
+
+# Data Quality
+
+The dataset achieved approximately:
+
+**83% data quality score**
+
+📸 (insert screenshot here: data quality dashboard)
+
+---
+
+# Dashboards
+
+Two dashboards were built in Tableau:
+
+### Market Overview
+
+Insights:
+
+- price distribution
+- brand ranking
+- discount analysis
+- rating comparison
+
+📸 (insert screenshot here: market overview dashboard)
+
+---
+
+### Data Quality Dashboard
+
+Monitors:
+
+- data completeness
+- null distribution
+- ingestion freshness
+
+📸 (insert screenshot here: data quality dashboard)
+
+---
+
+# Data Dictionary
+
+Final analytical table:
+
+```
+notebooks_features_scored
+```
+
+| Column | Type | Description |
+|------|------|-------------|
+product_key | string | Unique product identifier |
+ingestion_date | date | Data ingestion date |
+marketplace | string | Data source |
+search_term | string | Scraping search term |
+product_name | string | Product name |
+brand | string | Brand |
+price | double | Current price |
+old_price | double | Previous price |
+discount_pct | int | Discount percentage |
+rating | double | Average rating |
+reviews_count | bigint | Number of reviews |
+
+📸 (insert screenshot here: databricks table view)
+
+---
+
+# 🇧🇷 Português
+
+## Visão Geral
+
+Este projeto implementa um **pipeline completo de Engenharia de Dados** que coleta dados de notebooks do site da KaBuM e os transforma em insights analíticos.
+
+Tecnologias utilizadas:
+
+- Web Scraping com Python
+- Azure Blob Storage (Data Lake)
+- Processamento com Databricks + PySpark
+- Delta Lake
+- Monitoramento de qualidade de dados
+- Dashboards no Tableau
+
+📸 (colocar print aqui: arquitetura geral do projeto)
+
+---
+
+# Arquitetura
+
+O pipeline segue o padrão **Medallion Architecture**:
+
+Bronze → Silver → Gold
+
+Essa arquitetura permite:
+
+- rastreabilidade dos dados
+- isolamento das transformações
+- facilidade de debug
+- pipelines reproduzíveis
+
+---
+
+# Camadas do Data Lake
+
+## Camada Bronze — Ingestão de Dados Brutos
+
+Armazena **dados brutos coletados pelo scraper sem transformações**.
+
+Características:
+
+- ingestão JSONL
+- ingestão incremental por `ingestion_date`
+- particionamento por `search_term`
+- preservação do payload original
+
+Notebook responsável:
+
+📓 (colocar notebook aqui: 01_bronze_kabum_uc_adls_jsonl.ipynb)
+
+📸 (colocar print aqui: tabela bronze no Databricks)
+
+---
+
+## Camada Silver — Limpeza e Padronização
+
+Executa **limpeza e padronização do dataset**.
+
+Transformações:
+
+- conversão de tipos
+- remoção de duplicatas
+- tratamento de valores nulos
+- normalização de marcas
+
+Notebook responsável:
+
+📓 (colocar notebook aqui: 02_silver_transform_uc.ipynb)
+
+📸 (colocar print aqui: schema da tabela silver)
+
+---
+
+## Camada Gold — Enriquecimento e Analytics
+
+Produz **datasets analíticos prontos para BI**.
+
+Inclui:
+
+- extração de features com regex
+- criação de métricas derivadas
+- cálculo de qualidade de dados
+
+Tabela analítica final:
+
+```
+notebooks_features_scored
+```
+
+Notebooks responsáveis:
+
+📓 (colocar notebook aqui: 03_gold_enrichment_uc.ipynb)  
+📓 (colocar notebook aqui: 04_gold_scoring_quality_uc.ipynb)  
+📓 (colocar notebook aqui: 05_dashboard_sql_kpis_uc.ipynb)
+
+📸 (colocar print aqui: tabela gold no Databricks)
+
+---
+
+# Autor
+
+Filipe Albuquerque
+
+Data Engineering • Analytics • Cloud Data Platforms
 
 ---
 
