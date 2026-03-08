@@ -86,9 +86,9 @@ df_raw = spark.read.json(bronze_path)
 
 Notebook responsible:
 
-[01_bronze_kabum_uc_adls_jsonl.ipynb](notebooks/01_bronze_kabum_uc_adls_jsonl.ipynb)
+📓 [01_bronze_kabum_uc_adls_jsonl.ipynb](notebooks/01_bronze_kabum_uc_adls_jsonl.ipynb)
 
-![Bronze Table](Images/Bronze_table_Databricks.png)
+📸 ![Bronze Table](Images/Bronze_table_Databricks.png)
 
 ---
 
@@ -111,9 +111,9 @@ df_clean = df_raw     .withColumn("price", F.col("price").cast("double"))     .w
 
 Notebook responsible:
 
-📓 (insert notebook here: 02_silver_transform_uc.ipynb)
+📓 [02_bronze_kabum_uc_adls_jsonl.ipynb](02_silver_transform_uc.ipynb)
 
-📸 (insert screenshot here: silver table schema)
+📸 ![Silver Table](Images/Silver_table_Databricks.png)
 
 ---
 
@@ -160,11 +160,11 @@ notebooks_features_scored
 
 Notebooks responsible:
 
-📓 (insert notebook here: 03_gold_enrichment_uc.ipynb)  
-📓 (insert notebook here: 04_gold_scoring_quality_uc.ipynb)  
-📓 (insert notebook here: 05_dashboard_sql_kpis_uc.ipynb)
+📓 [03_gold_enrichment_uc.ipynb](03_gold_enrichment_uc.ipynb)
+📓 [04_gold_scoring_quality_uc.ipynb](04_gold_scoring_quality_uc.ipynb)  
+📓 [05_dashboard_sql_kpis_uc.ipynb](05_dashboard_sql_kpis_uc.ipynb)
 
-📸 (insert screenshot here: gold table schema)
+📸 ![Gold Table](Images/Gold_table_Databricks.png)
 
 ---
 
@@ -181,7 +181,7 @@ Pipeline notebooks execution order:
 05_dashboard_sql_kpis_uc.ipynb
 ```
 
-📓 (insert notebook here: 00_config_uc.ipynb)
+📓 [00_config_uc.ipynb](00_config_uc.ipynb)
 
 Each notebook represents a specific stage of the pipeline:
 
@@ -226,8 +226,8 @@ def scrape_product(url):
     }
 ```
 
-📄 (insert script here: kabum_scrape_v2.py)  
-📄 (insert script here: run_local.py)
+📄 [scraper/kabum_scrape_v2.py](scraper/kabum_scrape_v2.py)
+📄 [scraper/run_local.py](scraper/run_local.py)
 
 ---
 
@@ -237,7 +237,7 @@ The dataset achieved approximately:
 
 **83% data quality score**
 
-📸 (insert screenshot here: data quality dashboard)
+📸 ![Data Quality](Images/Tableau_Dashboard_Monitoramente_Qualidade_de_dados.png)
 
 ---
 
@@ -254,7 +254,7 @@ Insights:
 - discount analysis
 - rating comparison
 
-📸 (insert screenshot here: market overview dashboard)
+📸 ![Market Overview](Images/Tableau_Dashboard_Market_Overview.png)
 
 ---
 
@@ -266,7 +266,7 @@ Monitors:
 - null distribution
 - ingestion freshness
 
-📸 (insert screenshot here: data quality dashboard)
+📸 ![Data Quality](Images/Tableau_Dashboard_Monitoramente_Qualidade_de_dados.png)
 
 ---
 
@@ -292,7 +292,7 @@ discount_pct | int | Discount percentage |
 rating | double | Average rating |
 reviews_count | bigint | Number of reviews |
 
-📸 (insert screenshot here: databricks table view)
+📸 ![Gold Table](Images/Gold_table_Databricks.png)
 
 ---
 
@@ -310,8 +310,6 @@ Tecnologias utilizadas:
 - Delta Lake
 - Monitoramento de qualidade de dados
 - Dashboards no Tableau
-
-📸 (colocar print aqui: arquitetura geral do projeto)
 
 ---
 
@@ -345,9 +343,9 @@ Características:
 
 Notebook responsável:
 
-📓 (colocar notebook aqui: 01_bronze_kabum_uc_adls_jsonl.ipynb)
+📓 [01_bronze_kabum_uc_adls_jsonl.ipynb](notebooks/01_bronze_kabum_uc_adls_jsonl.ipynb)
 
-📸 (colocar print aqui: tabela bronze no Databricks)
+📸 ![Bronze Table](Images/Bronze_table_Databricks.png)
 
 ---
 
@@ -364,9 +362,9 @@ Transformações:
 
 Notebook responsável:
 
-📓 (colocar notebook aqui: 02_silver_transform_uc.ipynb)
+📓 [02_bronze_kabum_uc_adls_jsonl.ipynb](02_silver_transform_uc.ipynb)
 
-📸 (colocar print aqui: schema da tabela silver)
+📸 ![Silver Table](Images/Silver_table_Databricks.png)
 
 ---
 
@@ -388,21 +386,12 @@ notebooks_features_scored
 
 Notebooks responsáveis:
 
-📓 (colocar notebook aqui: 03_gold_enrichment_uc.ipynb)  
-📓 (colocar notebook aqui: 04_gold_scoring_quality_uc.ipynb)  
-📓 (colocar notebook aqui: 05_dashboard_sql_kpis_uc.ipynb)
+📓 [03_gold_enrichment_uc.ipynb](03_gold_enrichment_uc.ipynb)
+📓 [04_gold_scoring_quality_uc.ipynb](04_gold_scoring_quality_uc.ipynb)  
+📓 [05_dashboard_sql_kpis_uc.ipynb](05_dashboard_sql_kpis_uc.ipynb)
 
-📸 (colocar print aqui: tabela gold no Databricks)
+📸 ![Gold Table](Images/Gold_table_Databricks.png)
 
----
-
-# Autor
-
-Filipe Albuquerque
-
-Data Engineering • Analytics • Cloud Data Platforms
-
----
 
 # Web Scraping
 
@@ -432,9 +421,8 @@ def scrape_product(url):
     }
 ```
 
-📄 **(insert script here: kabum_scrape_v2.py)**
-
-📄 **(insert script here: run_local.py)**
+📄 [scraper/kabum_scrape_v2.py](scraper/kabum_scrape_v2.py)
+📄 [scraper/run_local.py](scraper/run_local.py)
 
 ---
 
