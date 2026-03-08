@@ -87,7 +87,7 @@ df_raw = spark.read.json(bronze_path)
 
 Notebook responsible:
 
-📓 (insert notebook here: 01_bronze_kabum_uc_adls_jsonl.ipynb)
+[01_bronze_kabum_uc_adls_jsonl.ipynb](notebooks/01_bronze_kabum_uc_adls_jsonl.ipynb)
 
 📸 (insert screenshot here: bronze table structure in Databricks)
 
