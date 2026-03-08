@@ -25,7 +25,6 @@ The pipeline architecture includes:
 - Data Quality monitoring
 - Tableau dashboards
 
-
 ---
 
 # Architecture
@@ -89,7 +88,7 @@ Notebook responsible:
 
 [01_bronze_kabum_uc_adls_jsonl.ipynb](notebooks/01_bronze_kabum_uc_adls_jsonl.ipynb)
 
-📸 (insert screenshot here: bronze table structure in Databricks)
+[Bronze Table](Images/Bronze_table_Databricks.png)
 
 ---
 
