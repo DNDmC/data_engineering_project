@@ -25,7 +25,6 @@ The pipeline architecture includes:
 - Data Quality monitoring
 - Tableau dashboards
 
-📸 (insert screenshot here: overall project architecture)
 
 ---
 
