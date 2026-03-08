@@ -531,6 +531,14 @@ Utilizar conector **Databricks SQL** apontando para o catalog `projeto_data_engi
 
 ---
 
+# Autor
+
+Filipe Albuquerque
+
+Data Engineering • Analytics • Cloud Data Platforms
+
+---
+
 ## Project Overview
 
 This project implements a **complete end-to-end Data Engineering pipeline** that collects notebook market data from the KaBuM website and transforms it into production-ready analytical insights.
@@ -992,5 +1000,13 @@ python scraper/run_local.py \
 ### 4. Connect Tableau
 
 Use the **Databricks SQL connector** pointing to catalog `projeto_data_engineering`, schema `kabum_project`, table `notebooks_features_scored`.
+
+---
+
+# Autor
+
+Filipe Albuquerque
+
+Data Engineering • Analytics • Cloud Data Platforms
 
 ---
