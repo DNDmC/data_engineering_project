@@ -88,7 +88,7 @@ Notebook responsible:
 
 [01_bronze_kabum_uc_adls_jsonl.ipynb](notebooks/01_bronze_kabum_uc_adls_jsonl.ipynb)
 
-[Bronze Table](Images/Bronze_table_Databricks.png)
+![Bronze Table](Images/Bronze_table_Databricks.png)
 
 ---
 
