@@ -156,6 +156,44 @@ spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
 
 ---
 
+## Web Scraping
+
+Os dados são coletados diretamente do site da KaBuM em dois estágios: coleta principal (Bronze) e enriquecimento técnico (Gold inbox).
+
+**Bibliotecas:**
+- `requests` — requisições HTTP com controle de User-Agent
+- `BeautifulSoup4` — parsing de HTML
+- `azure-storage-blob` — upload direto para ADLS via SDK Python
+- `pandas`, `tqdm` — manipulação e progresso
+
+**Estratégias técnicas do scraper:**
+- User-Agent customizado (Safari/macOS) para evitar bloqueios
+- `time.sleep(random)` entre requisições para rate limiting
+- Upload direto para Azure Blob Storage via `BlobServiceClient`
+- Detecção automática do arquivo CSV mais recente no prefix ADLS (`_pick_csv_in_prefix`)
+- Fallback de colunas de preço: tenta múltiplos campos (`price`, `price_text`, `price_str`, `price_formatted`) antes de retornar NULL
+
+```python
+def scrape_product(url):
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, "html.parser")
+
+    name = soup.find("h1").text
+    price = soup.find("span").text
+
+    return {
+        "product_name": name,
+        "price": price
+    }
+```
+
+📄 [scraper/kabum_scrape_v2.py](scraper/kabum_scrape_v2.py)
+📄 [scraper/run_local.py](scraper/run_local.py)
+
+📸 ![Databricks Workspace Script](Images/Databricks_Workspace_script_py.png)
+
+---
+
 ## Camadas do Data Lake
 
 ### Bronze — Ingestão de Dados Brutos
@@ -299,44 +337,6 @@ Notebooks responsáveis:
 📓 [05_dashboard_sql_kpis_uc.ipynb](05_dashboard_sql_kpis_uc.ipynb)
 
 📸 ![Gold Table](Images/Gold_table_Databricks.png)
-
----
-
-## Web Scraping
-
-Os dados são coletados diretamente do site da KaBuM em dois estágios: coleta principal (Bronze) e enriquecimento técnico (Gold inbox).
-
-**Bibliotecas:**
-- `requests` — requisições HTTP com controle de User-Agent
-- `BeautifulSoup4` — parsing de HTML
-- `azure-storage-blob` — upload direto para ADLS via SDK Python
-- `pandas`, `tqdm` — manipulação e progresso
-
-**Estratégias técnicas do scraper:**
-- User-Agent customizado (Safari/macOS) para evitar bloqueios
-- `time.sleep(random)` entre requisições para rate limiting
-- Upload direto para Azure Blob Storage via `BlobServiceClient`
-- Detecção automática do arquivo CSV mais recente no prefix ADLS (`_pick_csv_in_prefix`)
-- Fallback de colunas de preço: tenta múltiplos campos (`price`, `price_text`, `price_str`, `price_formatted`) antes de retornar NULL
-
-```python
-def scrape_product(url):
-    r = requests.get(url)
-    soup = BeautifulSoup(r.text, "html.parser")
-
-    name = soup.find("h1").text
-    price = soup.find("span").text
-
-    return {
-        "product_name": name,
-        "price": price
-    }
-```
-
-📄 [scraper/kabum_scrape_v2.py](scraper/kabum_scrape_v2.py)
-📄 [scraper/run_local.py](scraper/run_local.py)
-
-📸 ![Databricks Workspace Script](Images/Databricks_Workspace_script_py.png)
 
 ---
 
@@ -520,6 +520,15 @@ Utilizar conector **Databricks SQL** apontando para o catalog `projeto_data_engi
 
 ---
 
+## Autor
+
+**Filipe Albuquerque**  
+Data Engineering • Analytics • Cloud Data Platforms
+
+---
+
+---
+
 # 🧠 Kabum Notebook Market Analytics — Data Engineering Pipeline
 
 ![Python](https://img.shields.io/badge/Python-3.10-blue)
@@ -528,14 +537,6 @@ Utilizar conector **Databricks SQL** apontando para o catalog `projeto_data_engi
 ![Delta Lake](https://img.shields.io/badge/Delta-Lake-purple)
 ![Unity Catalog](https://img.shields.io/badge/Unity-Catalog-orange)
 ![Tableau](https://img.shields.io/badge/Tableau-Dashboard-orange)
-
----
-
-# Autor
-
-Filipe Albuquerque
-
-Data Engineering • Analytics • Cloud Data Platforms
 
 ---
 
@@ -675,6 +676,36 @@ spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
 
 ---
 
+## Web Scraping
+
+The scraper collects notebook data from KaBuM in two stages: main collection (Bronze) and technical enrichment (Gold inbox).
+
+**Libraries:**
+- `requests` — HTTP requests with User-Agent control
+- `BeautifulSoup4` — HTML parsing
+- `azure-storage-blob` — direct upload to ADLS via Python SDK
+- `pandas`, `tqdm` — data manipulation and progress tracking
+
+**Technical strategies:**
+- Custom User-Agent (Safari/macOS) to avoid blocking
+- `time.sleep(random)` between requests for rate limiting
+- Direct upload to Azure Blob Storage via `BlobServiceClient`
+- Automatic detection of the most recent CSV file in ADLS prefix (`_pick_csv_in_prefix`)
+- Multi-field price fallback: tries `price`, `price_text`, `price_str`, `price_formatted` before returning NULL
+
+```python
+def scrape_product(url):
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, "html.parser")
+```
+
+📄 [scraper/kabum_scrape_v2.py](scraper/kabum_scrape_v2.py)
+📄 [scraper/run_local.py](scraper/run_local.py)
+
+📸 ![Databricks Workspace Script](Images/Databricks_Workspace_script_py.png)
+
+---
+
 ## Data Lake Layers
 
 ### Bronze Layer — Raw Data Ingestion
@@ -790,36 +821,6 @@ Notebooks:
 📓 [05_dashboard_sql_kpis_uc.ipynb](05_dashboard_sql_kpis_uc.ipynb)
 
 📸 ![Gold Table](Images/Gold_table_Databricks.png)
-
----
-
-## Web Scraping
-
-The scraper collects notebook data from KaBuM in two stages: main collection (Bronze) and technical enrichment (Gold inbox).
-
-**Libraries:**
-- `requests` — HTTP requests with User-Agent control
-- `BeautifulSoup4` — HTML parsing
-- `azure-storage-blob` — direct upload to ADLS via Python SDK
-- `pandas`, `tqdm` — data manipulation and progress tracking
-
-**Technical strategies:**
-- Custom User-Agent (Safari/macOS) to avoid blocking
-- `time.sleep(random)` between requests for rate limiting
-- Direct upload to Azure Blob Storage via `BlobServiceClient`
-- Automatic detection of the most recent CSV file in ADLS prefix (`_pick_csv_in_prefix`)
-- Multi-field price fallback: tries `price`, `price_text`, `price_str`, `price_formatted` before returning NULL
-
-```python
-def scrape_product(url):
-    r = requests.get(url)
-    soup = BeautifulSoup(r.text, "html.parser")
-```
-
-📄 [scraper/kabum_scrape_v2.py](scraper/kabum_scrape_v2.py)
-📄 [scraper/run_local.py](scraper/run_local.py)
-
-📸 ![Databricks Workspace Script](Images/Databricks_Workspace_script_py.png)
 
 ---
 
@@ -1003,10 +1004,7 @@ Use the **Databricks SQL connector** pointing to catalog `projeto_data_engineeri
 
 ---
 
-# Autor
+## Author
 
-Filipe Albuquerque
-
+**Filipe Albuquerque**  
 Data Engineering • Analytics • Cloud Data Platforms
-
----
